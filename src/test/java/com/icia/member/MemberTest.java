@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class MemberTest {
 
-    /*
+    /*---
    테스트 목적은 MemberServiceImpl.save()에서 만든 코드가 정상동작을 하는지 확인
    기존 회원가입 테스트는  save.html에서 회원정보 입력 후 가입을 클릭해서 테스트
    그리고 DB에 데이터가 넘어왔는지 확인
