@@ -43,8 +43,8 @@ public class MemberTest {
     @Transactional // 테스트 시작할때 새로운 트랜잭션이 시작
     @Rollback // 테스트 종료 후 테스트 시 사용한 데이터를 삭제(롤백)
     public void memberDetailTest(){
-       // given: 테스트 조건 설정, 테스트는 독립적이어야 함
-            // 1. 새로운 회원을 등록하고 해당회원의 번호(member_id)를 가져옴.
+        // 1.1 db에 데이터가 없을수도 있기에 새로운 회원을 등록하고
+        // 해당회원의 번호(member_id)를 가져오는 형태로 진행되어야 테스트가 될 수 있음.
         MemberSaveDTO memberSaveDTO = new MemberSaveDTO("조회용회원이메일", "조회용회원비번", "조회용회원이름");
        // 1.2 테스트용 데이터를 DB에 저장하고 member_id를 가져옴.
         Long memberId = ms.save(memberSaveDTO);

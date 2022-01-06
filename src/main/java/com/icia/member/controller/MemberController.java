@@ -11,6 +11,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/member/*")
 @RequiredArgsConstructor // final 키워드가 붙은 필드만으로 생성자를 만들어 줌
@@ -45,13 +47,21 @@ public class MemberController  {
     }
 
     @PostMapping("login")
-    public String login(@Validated @ModelAttribute("login") MemberLoginDTO memberLoginDTO, BindingResult bindingResult){
+    public String login(@Validated @ModelAttribute("login") MemberLoginDTO memberLoginDTO, BindingResult bindingResult, HttpSession session){
 
         if(bindingResult.hasErrors()){
             return "member/login";
         }
-        return "redirect:/member/login";
-    }
+        boolean loginResult = ms.login(memberLoginDTO);
+        if(ms.login(memberLoginDTO)){
+            session.setAttribute("loginEmail", memberLoginDTO.getMemberEmail());
+            return "redirect:/member/findAll";
+        } else {
+            // 로그인 결과를 글로벌 오류(Global Error) : 전체적인 오류를 체크하는 것
+            bindingResult.reject("loginFail", "이메일 또는 비밀번호가 틀립니다!");
+            return "member/login";
+        }
+           }
 
     // 상세조회
     // /member/2, /member/15 => /member/{memberId}
