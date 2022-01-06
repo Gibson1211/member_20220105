@@ -52,8 +52,12 @@ public class MemberServiceImpl implements MemberService {
         // 호출 후 Entity로 리턴을 받아줘야 한다.
         MemberEntity memberEntity = mr.findByMemberEmail(memberLoginDTO.getMemberEmail());
         // 2. 비밀번호 일치 여부 확인
-        if (memberLoginDTO.getMemberPassword().equals(memberEntity.getMemberPassword())) {
-            return true;
+        if(memberEntity != null) {
+            if (memberLoginDTO.getMemberPassword().equals(memberEntity.getMemberPassword())) {
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }

@@ -5,7 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-
+    // Entity에는 절대 절대 언더바(_)를 쓰면 안된다.
+    // 카멜케이스로만 작성을 해야 한다.
 @Entity
 @Getter
 @Setter

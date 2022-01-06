@@ -9,6 +9,8 @@ spring:
     url: jdbc:mysql://localhost:3306/springbootclass?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: bootuser
     password: 1234
+  thymeleaf:
+    cache: false
 
   #JPA 관련 설정(Spring에 속해있는 설정으로 맨 앞칸에서 쓰면 안되고 위의 datasource와 같은 칸에서 써야 함.
   jpa:
