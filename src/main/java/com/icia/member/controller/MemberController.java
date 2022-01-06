@@ -12,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @Controller
 @RequestMapping("/member/*")
@@ -36,9 +37,16 @@ public class MemberController  {
             return "member/save";
         }
 
-        ms.save(memberSaveDTO);
+        try {
+            ms.save(memberSaveDTO);
+            } catch (IllegalStateException e) {
+            //e.getMessage()에는 Service에서 지정한 예외메세지가 담겨있음
+            bindingResult.reject("emailCheck", e.getMessage());
+            return "member/save";
+        }
         return "redirect:/member/login";
     }
+
 
     @GetMapping("login")
     public String loginForm(Model model){
@@ -71,5 +79,18 @@ public class MemberController  {
         MemberDetailDTO member=ms.findById(memberId);
         model.addAttribute("member", member);
         return "member/detail";
+
     }
+
+    // 목록출력(/member)
+    @GetMapping
+    public String findAll(Model model) {
+        List<MemberDetailDTO> memberList = ms.findAll();
+        model.addAttribute("memberList", memberList);
+        return "member/findAll";
+    }
+
+
+
+
 }

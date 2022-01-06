@@ -4,6 +4,7 @@ import com.icia.member.dto.MemberDetailDTO;
 import com.icia.member.dto.MemberLoginDTO;
 import com.icia.member.dto.MemberSaveDTO;
 
+import java.util.List;
 import java.util.Locale;
 
 public interface MemberService {
@@ -13,4 +14,6 @@ public interface MemberService {
     MemberDetailDTO findById(Long memberId);
 
     boolean login(MemberLoginDTO memberLoginDTO);
+
+    List<MemberDetailDTO> findAll();
 }

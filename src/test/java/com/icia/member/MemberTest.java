@@ -1,6 +1,7 @@
 package com.icia.member;
 
 import com.icia.member.dto.MemberDetailDTO;
+import com.icia.member.dto.MemberLoginDTO;
 import com.icia.member.dto.MemberSaveDTO;
 import com.icia.member.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 
 import javax.transaction.Transactional;
+
+import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -56,8 +60,68 @@ public class MemberTest {
             //    일치하지 않으면 테스트 실패
         // memberSaveDTO의 이메일과 findMember의 이메일 값이 일치하는지 확인
         assertThat(memberSaveDTO.getMemberEmail()).isEqualTo(findMember.getMemberEmail());
-
-
     }
 
+    //login 테스트코드
+    @Test
+    @Transactional
+    @Rollback
+    @DisplayName("로그인테스트")
+    public void loginTest() {
+
+       /*
+            1. DB에 데이터가 없을수도 있기에 새로운 회원을 가입하고(MemberSaveDTO)
+            2. 로그인 용 객체를 만든다(MemberLoginDTO)
+                1번과 2번을 수행할 때 동일한 이메일, 패스워드를 사용하도록 함.
+            3. 로그인 수행
+               DB에 저장한 패스워드와 로그인 창의 패스워드가 동일한 지 확인
+            4. 로그인 결과가 true인지 확인
+                                                                    */
+
+        // given
+        String testMemberEmail = "로그인테스트이메일";
+        String testMemberPassword = "로그인테스트패스워드";
+        String testMemberName = "로그인테스트이름";
+
+        MemberSaveDTO memberSaveDTO = new MemberSaveDTO(testMemberEmail, testMemberPassword, testMemberName);
+        ms.save(memberSaveDTO);
+        MemberLoginDTO memberLoginDTO = new MemberLoginDTO(testMemberEmail, testMemberPassword);
+        boolean loginResult = ms.login(memberLoginDTO);
+        assertThat(loginResult).isEqualTo(true);
+    }
+
+    //회원목록 테스트코드
+    @Test
+    @Transactional
+    @Rollback
+    @DisplayName("회원목록 테스트")
+    public void memberListTest() {
+
+       /*
+            1. member_table에 아무 데이터가 없는 상태에서 3명의 회원을 가입시킨 후 memberList 사이즈를
+               조회하여 3이면 테스트 통과
+
+                 */
+//        MemberSaveDTO memberSaveDTO = new MemberSaveDTO("리스트회원1", "리스트pw1", "리스트회원이름1");
+//        ms.save(memberSaveDTO);
+//        memberSaveDTO = new MemberSaveDTO("리스트회원2", "리스트pw2", "리스트회원이름2");
+//        ms.save(memberSaveDTO);
+//        memberSaveDTO = new MemberSaveDTO("리스트회원3", "리스트pw3", "리스트회원이름3");
+//        ms.save(memberSaveDTO);
+
+        for (int i = 1; i < 3; i++) {
+//            MemberSaveDTO memberSaveDTO = new MemberSaveDTO("리스트회원" + i, "리스트회원pw" + i, "리스트회원이름" + i);
+//            ms.save(memberSaveDTO);
+            ms.save(new MemberSaveDTO("리스트회원" + i, "리스트회원pw" + i, "리스트회원이름" + i));
+        }
+
+        // IntStream 방식, Arrow Function(화살표 함수)
+        IntStream.rangeClosed(1, 3).forEach(i -> {
+            ms.save(new MemberSaveDTO("리스트회원" + i, "리스트회원pw" + i, "리스트회원이름" + i));
+        });
+
+        List<MemberDetailDTO> list = ms.findAll();
+        assertThat(list.size()).isEqualTo(3);
+    }
 }
+

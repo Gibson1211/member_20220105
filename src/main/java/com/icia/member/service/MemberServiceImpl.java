@@ -8,6 +8,8 @@ import com.icia.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,7 +27,14 @@ public class MemberServiceImpl implements MemberService {
         */
 
         MemberEntity memberEntity = MemberEntity.saveMember(memberSaveDTO);
-        return mr.save(memberEntity).getId();
+        // 사용자가 입력한 이메일의 중복 여부 체크
+        MemberEntity emailCheckResult = mr.findByMemberEmail(memberSaveDTO.getMemberEmail());
+        // 이메일 중복체크 결과가 null이 아니라면 예외를 발생시킴.
+        // 예외 종류: IllegalStateException, 예외메세지: 중복된 이메일입니다.!!
+        if(emailCheckResult != null){
+            throw new IllegalStateException("중복된 이메일입니다.");
+        }
+       return mr.save(memberEntity).getId();
     }
 
     @Override
@@ -62,6 +71,22 @@ public class MemberServiceImpl implements MemberService {
             return false;
         }
     }
+
+    @Override
+    public List<MemberDetailDTO> findAll() {
+        List<MemberEntity> memberEntityList = mr.findAll();
+        // List<MemberEntity> -> List<MemberDetailDTO> 옮겨담기
+        List<MemberDetailDTO> memberList = new ArrayList<>();
+        for(MemberEntity m: memberEntityList) {
+            // Entity 객체를 MemberDetailDTO로 변환하고 memberList에 담음.
+               memberList.add(MemberDetailDTO.toMemberDetailDTO(m));
+//             MemberDetailDTO memberDetailDTO = MemberDetailDTO.toMemberDetailDTO(m);
+//             memberList.add(memberDetailDTO);
+        }
+        return memberList;
+    }
+
+
 
 
 }
